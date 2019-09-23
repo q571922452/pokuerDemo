@@ -19,7 +19,7 @@ var Floor = (function (_super) {
     Floor.prototype.setDiff = function (diff) {
         var _this = this;
         if (diff === void 0) { diff = 1; }
-        this.floorBg.texture = RES.getRes("shidun" + diff + "_png");
+        this.floorBg.texture = RES.getRes("shidun_png");
         this._diff = diff;
         this.height = this.floorBg.height;
         this.addEventListener(egret.Event.ENTER_FRAME, this.func = function () {
@@ -30,10 +30,17 @@ var Floor = (function (_super) {
         if (!GameConfig.instance.gameStart || GameConfig.instance.gameEnd)
             return;
         this.x -= GameConfig.instance.speed;
+        this.addOrRemove();
+    };
+    /**判断是否添加以及移除 */
+    Floor.prototype.addOrRemove = function () {
         if (this.x + this.width < 0) {
             this.removeEventListener(egret.Event.ENTER_FRAME, this.func, this);
             ObjPool.recover("floor", this);
         }
+        // if (!this.parent && this.x > 0 && this.x < GameConfig.instance.stageWidht + this.width) { // 还未入场的地图块加载
+        //     UIManager.instance.addSprite(this);
+        // }
     };
     Object.defineProperty(Floor.prototype, "diff", {
         /**获取难度*/
@@ -44,15 +51,15 @@ var Floor = (function (_super) {
         configurable: true
     });
     /**检测位置是否在地图块上 */
-    Floor.prototype.checkDownPos = function (px, py) {
-        if (px > this.x && px < (this.x + this.width / 2) && py > this.y && py < (this.y + (this.height / 2))) {
+    Floor.prototype.checkDownPos = function (player) {
+        if (player.x > this.x + 20 && player.x < (this.x + this.width) && (player.y + player.height / 4) >= this.y && player.y < (this.y + (player.height / 4))) {
             return true;
         }
         return false;
     };
     /**检测位置是否碰到人物的左边 */
     Floor.prototype.checkLeftPos = function (player) {
-        if ((player.x + player.width) < this.x + 10 && (player.x + player.width) > this.x - 10 && player.y > this.y && player.y < this.y + this.height) {
+        if (player.y > this.y && player.y < (this.y + this.height) && (player.x + player.width / 2) < (this.x + 100) && (player.x + player.width / 2) > (this.x - 10)) {
             return true;
         }
         return false;

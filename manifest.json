@@ -21,6 +21,7 @@
 		"bin-debug/GameMain.js",
 		"bin-debug/com/GameEvent.js",
 		"bin-debug/com/GameScene.js",
+		"bin-debug/com/Monster.js",
 		"bin-debug/com/Player.js",
 		"bin-debug/com/Pond.js",
 		"bin-debug/util/EventManager.js",

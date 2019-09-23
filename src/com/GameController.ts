@@ -8,7 +8,7 @@ class GameController extends eui.Component {
     private _lastFloor: Floor;//上一个地图块
 
 
-    private _floorList = [];//存放地图块
+    private _floorList: Array<Floor> = [];//存放地图块
     private _waterPoolList = [];//存放水池背景
     private _player: Player;//ip类
     /**根据配置添加地图块 */
@@ -16,11 +16,12 @@ class GameController extends eui.Component {
         var gameConfig = RES.getRes("GameConfig_json");
         let floorListStr: Array<string> = gameConfig.map.split("-");
         for (let i = 0; i < floorListStr.length; ++i) {
+
             if (floorListStr[i].split('')[1]) {//这里是地图块
                 let floor: Floor = ObjPool.getItemForPool("floor", Floor);
                 floor.setDiff(Number(floorListStr[i].split('')[1]));
                 floor.x = GameConfig.instance.floorWidth * i;
-                floor.y = GameConfig.instance.stageHeight - floor.height;
+                floor.y = GameConfig.instance.stageHeight - (floor.height + GameConfig.instance.diffNum[Number(floorListStr[i].split('')[1]) - 1]);
                 this._floorList.push(floor);
                 UIManager.instance.addSprite(floor);
             } else {//这里是水
@@ -31,32 +32,16 @@ class GameController extends eui.Component {
                 this._waterPoolList.push(waterPool);
                 UIManager.instance.addBg(waterPool);
             }
-
+            //添加怪物
+            for (let m = 0; m < gameConfig.monster.length; m++) {
+                if (gameConfig.monster[m].mapKey == this._floorList.length) {
+                    let monster: Monster = new Monster(gameConfig.monster[m].mt);
+                    monster.x = this._floorList[gameConfig.monster[m].mapKey - 1].x;
+                    monster.y = this._floorList[gameConfig.monster[m].mapKey - 1].y - monster.height / 4;
+                    UIManager.instance.addSprite(monster);
+                }
+            }
         }
-        // for (var key in gameConfig) {
-        //     if (gameConfig.hasOwnProperty(key)) {
-        //         var element = gameConfig[key];
-        //         this._floorConfig.push(element[Math.floor(Math.random()*3)]);
-        //     }
-        // }
-
-        // //生成地图块
-        // for(let j = 0; j < this._floorConfig.length; j++){
-        //     for(let i = 0; i < this._floorConfig[j].length; i++){
-        //         let mapkey = this._floorConfig[j][i];
-        //         var floor:Floor = ObjPool.getItemForPool("floor", Floor);
-        //         floor.setDiff(mapkey);
-        //         if(this._lastFloor){
-        //             floor.x = this._lastFloor.x + this._lastFloor.width - GameConfig.instance.floorDeviation;
-        //         }else{
-        //             floor.x = -GameConfig.instance.floorDeviation;
-        //         }
-        //         floor.y = GameConfig.instance.stageHeight - floor.height;
-        //         this._floorList.push(floor);
-        //         this._lastFloor = floor;
-        //         UIManager.instance.addSprite(floor);
-        //     }
-        // }
 
         this._player = new Player();
         this._player.y = GameConfig.instance.stageHeight - 300;
@@ -67,43 +52,59 @@ class GameController extends eui.Component {
     }
     /**帧监听 */
     public onLoop(): void {
-        // this._player.y += GameConfig.instance.downSpeed;
         this._player.onLoop();
         this.collideCheck();
+        this.clearFloor();
     }
     /**有效地图块 */
     private getEffFloors(): any {
         var effFloors = [];//存在视口中的地图块
-        for (let i = 0; i < this._floorList.length; ++i) {
-            if (this._floorList[i].x + this._floorList[i].width > 0 && this._floorList[i].x < GameConfig.instance.stageWidht) {//视口内的地图块
+        while (this._floorList[0].x + this._floorList[0].width < 0) { //删除多余数据
+            this._floorList.shift();
+        }
+        for (let i = 0; i < this._floorList.length; ++i) { // 返回当前以及下一块地图块
+            if (this._player.x > this._floorList[i].x + 20 && this._player.x < (this._floorList[i].x + this._floorList[i].width)) {
                 effFloors.push(this._floorList[i]);
+                effFloors.push(this._floorList[i + 1]);
+                return effFloors;
             }
         }
-        return effFloors;
+        // return effFloors;
     }
-
     /**碰撞检测 */
     private collideCheck(): void {
         //获取有效地图块
-        var floors = this.getEffFloors();
+        var floors: Array<Floor> = this.getEffFloors();
         /**人物是否碰到右边 */
-        var lc: boolean = false;
-        for (let i = 0; i < floors.length; i++) {
-            if (floors[i].checkDownPos(this._player.x, this._player.y)) {//检测是否落地
-                this._player.y = floors[i].y;
-                this._player.jumpReset();
-            }
-            if (floors[i].checkLeftPos(this._player)) {//检测是否碰撞到地图块左侧 人想后退
-                this._player.x -= GameConfig.instance.speed;
-                lc = true;
-            }
+        if (!floors) { // 如果floors 为空，则为当前位置是水，不进行碰撞检测
+            return;
         }
-
+        let lc: boolean = false;//是否进行位置校验
+        if (floors[0].checkDownPos(this._player)) {// 当前这块 检测是否落地
+            this._player.y = floors[0].y - this._player.height / 4;
+            this._player.jumpReset();
+        }
+        if (floors[1].checkLeftPos(this._player)) { // 下一块检测是否碰撞
+            this._player.x -= GameConfig.instance.speed;
+            lc = true;
+        }
         /**检测玩家位置是否需要矫正 */
-        console.log('===>', lc);
-        if (!lc && !this._player.checkInitX()) {//需要矫正 给玩家一个向前的加速度。。
-            GameConfig.instance.speedX = 3;
+        if (!lc && !this.checkInitX(this._player)) {//需要矫正 给玩家一个向前的加速度。。
+            GameConfig.instance.speedX = 4;
+        }else{
+            GameConfig.instance.speedX = 0;
         }
 
+    }
+    /**清除地图块 */
+    private clearFloor(): void {
+
+    }
+    /**检测人物是否还在初始位置*/
+    private checkInitX(player: Player): boolean {
+        if (player.x == GameConfig.instance.playerInitX) {
+            return true;
+        }
+        return false;
     }
 }

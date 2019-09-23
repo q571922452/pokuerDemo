@@ -14,13 +14,16 @@ var GameConfig = (function () {
         /**人物矫正速度*/
         this.speedX = 0;
         /**速度 */
-        this.speed = 11;
+        this.speed = 12.8;
         /**自由掉落速度 */
         this.downSpeed = 10;
         /**游戏开始 */
         this.gameStart = true;
         /**游戏结束 */
         this.gameEnd = false;
+        /**难度系数 */
+        // diffNum = [-88, 8, 104];
+        this.diffNum = [-88, 8, 104];
     }
     Object.defineProperty(GameConfig, "instance", {
         get: function () {

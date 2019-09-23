@@ -28,6 +28,8 @@ var Player = (function (_super) {
         this.addChild(role);
         role.gotoAndPlay(0, -1);
         this.x = GameConfig.instance.playerInitX;
+        this.anchorOffsetX = this.width / 2;
+        this.anchorOffsetY = this.height / 2;
         this.anchorOffsetY = role.height / 2;
     };
     Player.prototype.onLoop = function () {
@@ -43,11 +45,10 @@ var Player = (function (_super) {
         //x轴校验
         if (this.x < GameConfig.instance.playerInitX)
             this.x += GameConfig.instance.speedX;
-        else
-            GameConfig.instance.speedX = 0;
         //玩家掉出屏幕
-        if (this.y > (GameConfig.instance.stageHeight + this.height)) {
-            console.log("gameOver");
+        if (this.y > (GameConfig.instance.stageHeight + this.height) || this.x + this.width / 2 < 0) {
+            // console.log("gameOver");
+            // GameConfig.instance.gameEnd = true;
         }
     };
     Player.prototype.gotoJump = function () {
@@ -55,15 +56,6 @@ var Player = (function (_super) {
             this.jumpCount++;
             this.vy = -30;
         }
-    };
-    /**检测人物是否还在初始位置*/
-    Player.prototype.checkInitX = function () {
-        if (this.x == GameConfig.instance.playerInitX) {
-            console.log('true');
-            return true;
-        }
-        console.log('false');
-        return false;
     };
     /**重置跳跃属性 */
     Player.prototype.jumpReset = function () {

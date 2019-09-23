@@ -17,6 +17,8 @@ class Player extends egret.Sprite {
         this.addChild(role);
         role.gotoAndPlay(0, -1);
         this.x = GameConfig.instance.playerInitX;
+        this.anchorOffsetX = this.width / 2;
+        this.anchorOffsetY = this.height / 2;
         this.anchorOffsetY = role.height / 2;
     }
     public onLoop(): void {
@@ -31,12 +33,11 @@ class Player extends egret.Sprite {
         //x轴校验
         if (this.x < GameConfig.instance.playerInitX)
             this.x += GameConfig.instance.speedX;
-        else
-            GameConfig.instance.speedX = 0;
 
         //玩家掉出屏幕
-        if (this.y > (GameConfig.instance.stageHeight + this.height)) {
-            console.log("gameOver");
+        if (this.y > (GameConfig.instance.stageHeight + this.height) || this.x + this.width / 2 < 0) {
+            // console.log("gameOver");
+            // GameConfig.instance.gameEnd = true;
         }
     }
     public gotoJump(): void {
@@ -44,15 +45,6 @@ class Player extends egret.Sprite {
             this.jumpCount++;
             this.vy = -30;
         }
-    }
-    /**检测人物是否还在初始位置*/
-    public checkInitX(): boolean {
-        if (this.x == GameConfig.instance.playerInitX) {
-            console.log('true');
-            return true;
-        }
-        console.log('false');
-        return false;
     }
     /**重置跳跃属性 */
     public jumpReset(): void {

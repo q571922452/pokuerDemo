@@ -28,7 +28,7 @@ var GameController = (function (_super) {
                 var floor_1 = ObjPool.getItemForPool("floor", Floor);
                 floor_1.setDiff(Number(floorListStr[i].split('')[1]));
                 floor_1.x = GameConfig.instance.floorWidth * i;
-                floor_1.y = GameConfig.instance.stageHeight - floor_1.height;
+                floor_1.y = GameConfig.instance.stageHeight - (floor_1.height + GameConfig.instance.diffNum[Number(floorListStr[i].split('')[1]) - 1]);
                 this._floorList.push(floor_1);
                 UIManager.instance.addSprite(floor_1);
             }
@@ -40,30 +40,16 @@ var GameController = (function (_super) {
                 this._waterPoolList.push(waterPool);
                 UIManager.instance.addBg(waterPool);
             }
+            //添加怪物
+            for (var m = 0; m < gameConfig.monster.length; m++) {
+                if (gameConfig.monster[m].mapKey == this._floorList.length) {
+                    var monster = new Monster(gameConfig.monster[m].mt);
+                    monster.x = this._floorList[gameConfig.monster[m].mapKey - 1].x;
+                    monster.y = this._floorList[gameConfig.monster[m].mapKey - 1].y - monster.height / 4;
+                    UIManager.instance.addSprite(monster);
+                }
+            }
         }
-        // for (var key in gameConfig) {
-        //     if (gameConfig.hasOwnProperty(key)) {
-        //         var element = gameConfig[key];
-        //         this._floorConfig.push(element[Math.floor(Math.random()*3)]);
-        //     }
-        // }
-        // //生成地图块
-        // for(let j = 0; j < this._floorConfig.length; j++){
-        //     for(let i = 0; i < this._floorConfig[j].length; i++){
-        //         let mapkey = this._floorConfig[j][i];
-        //         var floor:Floor = ObjPool.getItemForPool("floor", Floor);
-        //         floor.setDiff(mapkey);
-        //         if(this._lastFloor){
-        //             floor.x = this._lastFloor.x + this._lastFloor.width - GameConfig.instance.floorDeviation;
-        //         }else{
-        //             floor.x = -GameConfig.instance.floorDeviation;
-        //         }
-        //         floor.y = GameConfig.instance.stageHeight - floor.height;
-        //         this._floorList.push(floor);
-        //         this._lastFloor = floor;
-        //         UIManager.instance.addSprite(floor);
-        //     }
-        // }
         this._player = new Player();
         this._player.y = GameConfig.instance.stageHeight - 300;
         UIManager.instance.addSprite(this._player);
@@ -73,41 +59,59 @@ var GameController = (function (_super) {
     };
     /**帧监听 */
     GameController.prototype.onLoop = function () {
-        // this._player.y += GameConfig.instance.downSpeed;
         this._player.onLoop();
         this.collideCheck();
+        this.clearFloor();
     };
     /**有效地图块 */
     GameController.prototype.getEffFloors = function () {
         var effFloors = []; //存在视口中的地图块
+        while (this._floorList[0].x + this._floorList[0].width < 0) {
+            this._floorList.shift();
+        }
         for (var i = 0; i < this._floorList.length; ++i) {
-            if (this._floorList[i].x + this._floorList[i].width > 0 && this._floorList[i].x < GameConfig.instance.stageWidht) {
+            if (this._player.x > this._floorList[i].x + 20 && this._player.x < (this._floorList[i].x + this._floorList[i].width)) {
                 effFloors.push(this._floorList[i]);
+                effFloors.push(this._floorList[i + 1]);
+                return effFloors;
             }
         }
-        return effFloors;
+        // return effFloors;
     };
     /**碰撞检测 */
     GameController.prototype.collideCheck = function () {
         //获取有效地图块
         var floors = this.getEffFloors();
         /**人物是否碰到右边 */
-        var lc = false;
-        for (var i = 0; i < floors.length; i++) {
-            if (floors[i].checkDownPos(this._player.x, this._player.y)) {
-                this._player.y = floors[i].y;
-                this._player.jumpReset();
-            }
-            if (floors[i].checkLeftPos(this._player)) {
-                this._player.x -= GameConfig.instance.speed;
-                lc = true;
-            }
+        if (!floors) {
+            return;
+        }
+        var lc = false; //是否进行位置校验
+        if (floors[0].checkDownPos(this._player)) {
+            this._player.y = floors[0].y - this._player.height / 4;
+            this._player.jumpReset();
+        }
+        if (floors[1].checkLeftPos(this._player)) {
+            this._player.x -= GameConfig.instance.speed;
+            lc = true;
         }
         /**检测玩家位置是否需要矫正 */
-        console.log('===>', lc);
-        if (!lc && !this._player.checkInitX()) {
-            GameConfig.instance.speedX = 3;
+        if (!lc && !this.checkInitX(this._player)) {
+            GameConfig.instance.speedX = 4;
         }
+        else {
+            GameConfig.instance.speedX = 0;
+        }
+    };
+    /**清除地图块 */
+    GameController.prototype.clearFloor = function () {
+    };
+    /**检测人物是否还在初始位置*/
+    GameController.prototype.checkInitX = function (player) {
+        if (player.x == GameConfig.instance.playerInitX) {
+            return true;
+        }
+        return false;
     };
     return GameController;
 }(eui.Component));

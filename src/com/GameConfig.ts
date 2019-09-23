@@ -19,7 +19,7 @@ class GameConfig {
     speedX = 0;
 
     /**速度 */
-    speed = 11;
+    speed = 12.8;
 
     /**自由掉落速度 */
     downSpeed = 10;
@@ -29,4 +29,9 @@ class GameConfig {
 
     /**游戏结束 */
     gameEnd = false;
+
+    /**难度系数 */
+    // diffNum = [-88, 8, 104];
+    diffNum = [-88, 8, 104];
+
 }

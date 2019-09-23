@@ -105,19 +105,6 @@ class Main extends eui.UILayer {
         var gamelayer: egret.Sprite = this.stage.addChild(new egret.Sprite()) as egret.Sprite;
         UIManager.instance = new UIManager(bglayer, gamelayer);
         new GameMain(this.stage);
-        // var mcDataFactory = new egret.MovieClipDataFactory(RES.getRes("ydg2_json"), RES.getRes("ydg2_png"));
-        // this.role = new egret.MovieClip(mcDataFactory.generateMovieClipData("sg"));
-        // this.role.gotoAndPlay(0, -1);
-        // this.role.x = 500;
-        // this.role.anchorOffsetX = this.role.width/2
-        // this.stage.addChild(this.role);
-        // egret.Tween.get(this.role, { loop: true }).to({ x:1000 }, 2000).call(() => {
-        //     this.role.scaleX = -this.role.scaleX;
-        // })
-        // .to({ x: 500 }, 2000)
-        // .call(() => {
-        //     this.role.scaleX = -this.role.scaleX;
-        // });
     }
     /**
      * 描述文件加载成功，开始播放动画

@@ -27,6 +27,10 @@ var GameScene = (function (_super) {
         if (this.moveX - this.bg3.x >= this.bg3.width) {
             this.bg3.x += this.bg3.width * 3;
         }
+        if (GameConfig.instance.gameEnd) {
+            this.ggText.visible = true;
+            this.ggbg.visible = true;
+        }
     };
     return GameScene;
 }(eui.Component));
