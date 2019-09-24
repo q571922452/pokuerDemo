@@ -23,7 +23,7 @@ var GameConfig = (function () {
         this.gameEnd = false;
         /**难度系数 */
         // diffNum = [-88, 8, 104];
-        this.diffNum = [-88, 8, 104];
+        this.diffNum = [-192, -96, 0];
     }
     Object.defineProperty(GameConfig, "instance", {
         get: function () {

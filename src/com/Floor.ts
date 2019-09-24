@@ -12,14 +12,14 @@ class Floor extends eui.Component {
 
     /**设置难度 */
     public setDiff(diff: number = 1): void {
-        this.floorBg.texture = RES.getRes("shidun_png");
+        this.floorBg.texture = RES.getRes("shidun4_png");
         this._diff = diff;
         this.height = this.floorBg.height;
         this.addEventListener(egret.Event.ENTER_FRAME, this.func = () => {
             this.onLoop();
         }, this)
     }
-
+    
     private onLoop(): void {
         if (!GameConfig.instance.gameStart || GameConfig.instance.gameEnd) return;
 
@@ -45,7 +45,7 @@ class Floor extends eui.Component {
 
     /**检测位置是否在地图块上 */
     public checkDownPos(player: Player): boolean {
-        if (player.x > this.x + 20 && player.x < (this.x + this.width) && (player.y + player.height / 4) >= this.y && player.y < (this.y + (player.height / 4))) {
+        if (player.x > this.x && player.x < (this.x + this.width) && (player.y + player.height / 4) > this.y && (player.y + player.height / 4) < (this.y + 96)) {
             return true;
         }
         return false;
@@ -53,7 +53,7 @@ class Floor extends eui.Component {
 
     /**检测位置是否碰到人物的左边 */
     public checkLeftPos(player: Player): boolean {
-        if (player.y > this.y && player.y < (this.y + this.height) && (player.x + player.width / 2) < (this.x + 100) && (player.x + player.width / 2) > (this.x - 10)) {
+        if ((player.x + player.width / 2) < (this.x + 20) && (player.x + player.width / 2) > (this.x - 20) && (player.y + player.height / 4) > this.y && (player.y + player.height / 4) < (this.y + this.height)) {
             return true;
         }
         return false;

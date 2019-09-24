@@ -19,7 +19,7 @@ var Floor = (function (_super) {
     Floor.prototype.setDiff = function (diff) {
         var _this = this;
         if (diff === void 0) { diff = 1; }
-        this.floorBg.texture = RES.getRes("shidun_png");
+        this.floorBg.texture = RES.getRes("shidun4_png");
         this._diff = diff;
         this.height = this.floorBg.height;
         this.addEventListener(egret.Event.ENTER_FRAME, this.func = function () {
@@ -52,14 +52,14 @@ var Floor = (function (_super) {
     });
     /**检测位置是否在地图块上 */
     Floor.prototype.checkDownPos = function (player) {
-        if (player.x > this.x + 20 && player.x < (this.x + this.width) && (player.y + player.height / 4) >= this.y && player.y < (this.y + (player.height / 4))) {
+        if (player.x > this.x && player.x < (this.x + this.width) && (player.y + player.height / 4) > this.y && (player.y + player.height / 4) < (this.y + 96)) {
             return true;
         }
         return false;
     };
     /**检测位置是否碰到人物的左边 */
     Floor.prototype.checkLeftPos = function (player) {
-        if (player.y > this.y && player.y < (this.y + this.height) && (player.x + player.width / 2) < (this.x + 100) && (player.x + player.width / 2) > (this.x - 10)) {
+        if ((player.x + player.width / 2) < (this.x + 20) && (player.x + player.width / 2) > (this.x - 20) && (player.y + player.height / 4) > this.y && (player.y + player.height / 4) < (this.y + this.height)) {
             return true;
         }
         return false;

@@ -32,6 +32,6 @@ class GameConfig {
 
     /**难度系数 */
     // diffNum = [-88, 8, 104];
-    diffNum = [-88, 8, 104];
+    diffNum = [-192, -96, 0];
 
 }

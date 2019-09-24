@@ -10,7 +10,7 @@
 		"libs/modules/promise/promise.js"
 	],
 	"game": [
-		"bin-debug/com/GameController.js",
+		"bin-debug/com/GameEvent.js",
 		"bin-debug/AssetAdapter.js",
 		"bin-debug/LoadingUI.js",
 		"bin-debug/Main.js",
@@ -18,9 +18,10 @@
 		"bin-debug/ThemeAdapter.js",
 		"bin-debug/com/Floor.js",
 		"bin-debug/com/GameConfig.js",
+		"bin-debug/com/GameController.js",
 		"bin-debug/GameMain.js",
-		"bin-debug/com/GameEvent.js",
 		"bin-debug/com/GameScene.js",
+		"bin-debug/com/Gress.js",
 		"bin-debug/com/Monster.js",
 		"bin-debug/com/Player.js",
 		"bin-debug/com/Pond.js",

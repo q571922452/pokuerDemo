@@ -16,7 +16,9 @@ var GameController = (function (_super) {
         _super.call(this) || this;
         _this._floorConfig = []; //这里存放一下随机后的地图块配置文件
         _this._floorList = []; //存放地图块
+        _this._monsterList = []; //存放怪物的数组
         _this._waterPoolList = []; //存放水池背景
+        _this._gressList = []; // 存放水草
         return _this;
     }
     /**根据配置添加地图块 */
@@ -31,6 +33,13 @@ var GameController = (function (_super) {
                 floor_1.y = GameConfig.instance.stageHeight - (floor_1.height + GameConfig.instance.diffNum[Number(floorListStr[i].split('')[1]) - 1]);
                 this._floorList.push(floor_1);
                 UIManager.instance.addSprite(floor_1);
+                //这里添加一个水草
+                var gress = ObjPool.getItemForPool('gress', Gress);
+                gress.startTween();
+                gress.y = GameConfig.instance.stageHeight - gress.height;
+                gress.x = GameConfig.instance.floorWidth * i - gress.width / 2;
+                this._gressList.push(gress);
+                UIManager.instance.addSprite(gress);
             }
             else {
                 var waterPool = ObjPool.getItemForPool("pond", Pond);
@@ -46,6 +55,7 @@ var GameController = (function (_super) {
                     var monster = new Monster(gameConfig.monster[m].mt);
                     monster.x = this._floorList[gameConfig.monster[m].mapKey - 1].x;
                     monster.y = this._floorList[gameConfig.monster[m].mapKey - 1].y - monster.height / 4;
+                    this._monsterList.push(monster);
                     UIManager.instance.addSprite(monster);
                 }
             }
@@ -70,13 +80,17 @@ var GameController = (function (_super) {
             this._floorList.shift();
         }
         for (var i = 0; i < this._floorList.length; ++i) {
-            if (this._player.x > this._floorList[i].x + 20 && this._player.x < (this._floorList[i].x + this._floorList[i].width)) {
+            if (this._player.x > this._floorList[i].x && this._player.x < (this._floorList[i].x + GameConfig.instance.floorWidth)) {
                 effFloors.push(this._floorList[i]);
                 effFloors.push(this._floorList[i + 1]);
                 return effFloors;
             }
         }
         // return effFloors;
+    };
+    /**返回Monster信息 */
+    GameController.prototype.getMonsterList = function () {
+        return '';
     };
     /**碰撞检测 */
     GameController.prototype.collideCheck = function () {

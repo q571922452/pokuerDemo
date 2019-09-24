@@ -37,7 +37,7 @@ class Player extends egret.Sprite {
         //玩家掉出屏幕
         if (this.y > (GameConfig.instance.stageHeight + this.height) || this.x + this.width / 2 < 0) {
             // console.log("gameOver");
-            // GameConfig.instance.gameEnd = true;
+            GameConfig.instance.gameEnd = true;
         }
     }
     public gotoJump(): void {
