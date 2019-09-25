@@ -16,6 +16,7 @@
 		"bin-debug/Main.js",
 		"bin-debug/Platform.js",
 		"bin-debug/ThemeAdapter.js",
+		"bin-debug/com/Cloud.js",
 		"bin-debug/com/Floor.js",
 		"bin-debug/com/GameConfig.js",
 		"bin-debug/com/GameController.js",
@@ -25,7 +26,9 @@
 		"bin-debug/com/Monster.js",
 		"bin-debug/com/Player.js",
 		"bin-debug/com/Pond.js",
+		"bin-debug/com/TreeOrHouse.js",
 		"bin-debug/util/EventManager.js",
+		"bin-debug/util/NetManager.js",
 		"bin-debug/util/ObjPool.js",
 		"bin-debug/util/UIManager.js"
 	]

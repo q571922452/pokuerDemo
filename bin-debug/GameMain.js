@@ -10,8 +10,6 @@ var GameMain = (function () {
     /**初始化 */
     GameMain.prototype.init = function () {
         var _this = this;
-        this.gameScene = new GameScene();
-        UIManager.instance.addBg(this.gameScene);
         this.gameControl = new GameController();
         //这里生产地图块 到时候放在游戏开始的时候
         this.gameControl.addFloor();
@@ -24,7 +22,6 @@ var GameMain = (function () {
     /**舞台帧监听*/
     GameMain.prototype.onLoop = function () {
         if (GameConfig.instance.gameStart) {
-            this.gameScene.onLoop();
             this.gameControl.onLoop();
         }
     };

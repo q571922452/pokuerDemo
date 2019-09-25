@@ -8,13 +8,15 @@ var GameConfig = (function () {
         /**舞台高 */
         this.stageHeight = 1080;
         /**地图块固定宽度 资源宽度484需要覆盖100px */
-        this.floorWidth = 384;
+        this.floorWidth = 480;
         /**初始人物位置 */
         this.playerInitX = 576;
         /**人物矫正速度*/
         this.speedX = 0;
         /**速度 */
-        this.speed = 12.8;
+        this.speed = 15.8;
+        /**浮云速度 */
+        this.cloudSpeed = 2;
         /**自由掉落速度 */
         this.downSpeed = 10;
         /**游戏开始 */
@@ -22,8 +24,9 @@ var GameConfig = (function () {
         /**游戏结束 */
         this.gameEnd = false;
         /**难度系数 */
-        // diffNum = [-88, 8, 104];
         this.diffNum = [-192, -96, 0];
+        /**请求地址*/
+        this.httpURL = "";
     }
     Object.defineProperty(GameConfig, "instance", {
         get: function () {

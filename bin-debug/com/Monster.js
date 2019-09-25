@@ -51,6 +51,15 @@ var Monster = (function (_super) {
         if (this.x + this.width < 0)
             this.clearRes();
     };
+    /**碰撞检测 */
+    Monster.prototype.collide = function (player) {
+        var globalPoint = this.localToGlobal(this.ms.x, this.ms.y); //局部转世界
+        var playPoint = this.localToGlobal(player.x, player.y);
+        if ((player.x + player.width / 2) >= (globalPoint.x - this.ms.width / 2) && (player.x + player.width / 2) < (globalPoint.x + this.ms.width / 2) && player.y > (globalPoint.y - this.ms.height / 2) && player.y <= (globalPoint.y + this.ms.height / 2)) {
+            return true;
+        }
+        return false;
+    };
     /**清理对象 */
     Monster.prototype.clearRes = function () {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.func, this);

@@ -10,7 +10,7 @@ class GameConfig {
     stageHeight = 1080;
 
     /**地图块固定宽度 资源宽度484需要覆盖100px */
-    floorWidth = 384;
+    floorWidth = 480;
 
     /**初始人物位置 */
     playerInitX = 576;
@@ -19,7 +19,10 @@ class GameConfig {
     speedX = 0;
 
     /**速度 */
-    speed = 12.8;
+    speed = 15.8;
+
+    /**浮云速度 */
+    cloudSpeed = 2;
 
     /**自由掉落速度 */
     downSpeed = 10;
@@ -31,7 +34,9 @@ class GameConfig {
     gameEnd = false;
 
     /**难度系数 */
-    // diffNum = [-88, 8, 104];
     diffNum = [-192, -96, 0];
 
+
+    /**请求地址*/
+    httpURL = "";
 }

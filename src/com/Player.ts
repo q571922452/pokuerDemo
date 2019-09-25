@@ -12,13 +12,12 @@ class Player extends egret.Sprite {
     private presentPosY: number = 0;// 当前最低位置
 
     private init(): void {
-        var mcDataFactory = new egret.MovieClipDataFactory(RES.getRes("ip_json"), RES.getRes("ip_png"));
+        var mcDataFactory = new egret.MovieClipDataFactory(RES.getRes("ip1_json"), RES.getRes("ip1_png"));
         var role: egret.MovieClip = new egret.MovieClip(mcDataFactory.generateMovieClipData("ip"));
         this.addChild(role);
         role.gotoAndPlay(0, -1);
         this.x = GameConfig.instance.playerInitX;
-        this.anchorOffsetX = this.width / 2;
-        this.anchorOffsetY = this.height / 2;
+        this.anchorOffsetX = role.width / 2;
         this.anchorOffsetY = role.height / 2;
     }
     public onLoop(): void {
@@ -36,7 +35,6 @@ class Player extends egret.Sprite {
 
         //玩家掉出屏幕
         if (this.y > (GameConfig.instance.stageHeight + this.height) || this.x + this.width / 2 < 0) {
-            // console.log("gameOver");
             GameConfig.instance.gameEnd = true;
         }
     }

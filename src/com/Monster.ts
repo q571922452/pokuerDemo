@@ -41,6 +41,16 @@ class Monster extends egret.Sprite {
             this.clearRes();
 
     }
+    /**碰撞检测 */
+    public collide(player: Player): boolean {
+        var globalPoint: egret.Point = this.localToGlobal(this.ms.x, this.ms.y); //局部转世界
+        var playPoint: egret.Point = this.localToGlobal(player.x, player.y);
+        if ((player.x + player.width / 2) >= (globalPoint.x - this.ms.width / 2) && (player.x + player.width / 2) < (globalPoint.x + this.ms.width / 2) && player.y > (globalPoint.y - this.ms.height / 2) && player.y <= (globalPoint.y + this.ms.height / 2)) {
+            return true;
+        }
+        return false;
+    }
+
     /**清理对象 */
     private clearRes(): void {
         this.removeEventListener(egret.Event.ENTER_FRAME, this.func, this);

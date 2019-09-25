@@ -23,13 +23,12 @@ var Player = (function (_super) {
         return _this;
     }
     Player.prototype.init = function () {
-        var mcDataFactory = new egret.MovieClipDataFactory(RES.getRes("ip_json"), RES.getRes("ip_png"));
+        var mcDataFactory = new egret.MovieClipDataFactory(RES.getRes("ip1_json"), RES.getRes("ip1_png"));
         var role = new egret.MovieClip(mcDataFactory.generateMovieClipData("ip"));
         this.addChild(role);
         role.gotoAndPlay(0, -1);
         this.x = GameConfig.instance.playerInitX;
-        this.anchorOffsetX = this.width / 2;
-        this.anchorOffsetY = this.height / 2;
+        this.anchorOffsetX = role.width / 2;
         this.anchorOffsetY = role.height / 2;
     };
     Player.prototype.onLoop = function () {
@@ -47,7 +46,6 @@ var Player = (function (_super) {
             this.x += GameConfig.instance.speedX;
         //玩家掉出屏幕
         if (this.y > (GameConfig.instance.stageHeight + this.height) || this.x + this.width / 2 < 0) {
-            // console.log("gameOver");
             GameConfig.instance.gameEnd = true;
         }
     };

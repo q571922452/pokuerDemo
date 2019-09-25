@@ -6,9 +6,15 @@ class Pond extends egret.Sprite {
     private _mdf: egret.MovieClipDataFactory;// 资源
     private func: Function;//帧监听function
     /**创建水池动画 */
-    public createAni(type?: number): void {
-        let mdf = new egret.MovieClipDataFactory(RES.getRes("e11_json"), RES.getRes("e11_png"));
-        this._mc = new egret.MovieClip(mdf.generateMovieClipData("play"));
+    public setDiff(diffNum: any = '1'): void {
+        let type = Number(Math.ceil(Math.random() * 2));
+        console.log("====>", type);
+        let mdf: egret.MovieClipDataFactory;
+        if (diffNum != '3')
+            mdf = new egret.MovieClipDataFactory(RES.getRes("szxs" + diffNum + "-" + type + "_json"), RES.getRes("szxs" + diffNum + "-" + type + "_png"));
+        else
+            mdf = new egret.MovieClipDataFactory(RES.getRes("szxs" + diffNum + "_json"), RES.getRes("szxs" + diffNum + "_png"));
+        this._mc = new egret.MovieClip(mdf.generateMovieClipData("1"));
         this._mc.gotoAndPlay(0, -1);
         this.addChild(this._mc);
         //添加帧监听

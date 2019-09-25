@@ -18,42 +18,60 @@ var GameController = (function (_super) {
         _this._floorList = []; //存放地图块
         _this._monsterList = []; //存放怪物的数组
         _this._waterPoolList = []; //存放水池背景
-        _this._gressList = []; // 存放水草
         return _this;
     }
     /**根据配置添加地图块 */
     GameController.prototype.addFloor = function () {
+        //添加场景
+        this.gameScene = new GameScene();
+        UIManager.instance.addBg(this.gameScene);
+        //添加地图
         var gameConfig = RES.getRes("GameConfig_json");
         var floorListStr = gameConfig.map.split("-");
         for (var i = 0; i < floorListStr.length; ++i) {
-            if (floorListStr[i].split('')[1]) {
+            if (floorListStr[i].split('')[0] == 'r') {
                 var floor_1 = ObjPool.getItemForPool("floor", Floor);
                 floor_1.setDiff(Number(floorListStr[i].split('')[1]));
-                floor_1.x = GameConfig.instance.floorWidth * i;
+                floor_1.x = this._lastObj ? this._lastObj.x + this._lastObj.width : GameConfig.instance.floorWidth * i;
                 floor_1.y = GameConfig.instance.stageHeight - (floor_1.height + GameConfig.instance.diffNum[Number(floorListStr[i].split('')[1]) - 1]);
                 this._floorList.push(floor_1);
                 UIManager.instance.addSprite(floor_1);
+                this._lastObj = null;
+                this._lastObj = floor_1;
                 //这里添加一个水草
                 var gress = ObjPool.getItemForPool('gress', Gress);
                 gress.startTween();
                 gress.y = GameConfig.instance.stageHeight - gress.height;
-                gress.x = GameConfig.instance.floorWidth * i - gress.width / 2;
-                this._gressList.push(gress);
+                gress.x = floor_1.x - gress.width / 4;
                 UIManager.instance.addSprite(gress);
+                if (floorListStr[i].split('')[1] == '2' && floorListStr[i + 1].split('')[1] == '3') {
+                    var bg = ObjPool.getItemForPool('toh', TreeOrHouse);
+                    bg.startTween();
+                    bg.x = floor_1.x + floor_1.width - bg.width / 2;
+                    bg.y = GameConfig.instance.stageHeight - bg.height - 276;
+                    UIManager.instance.addBg(bg);
+                    var cloud = ObjPool.getItemForPool('cloud', Cloud);
+                    cloud.startTween();
+                    cloud.x = Math.random() >= 0.5 ? bg.x - cloud.width / 2 : bg.x + cloud.width * 1.5;
+                    cloud.y = bg.y + bg.height - cloud.height / 2;
+                    UIManager.instance.addBg(cloud);
+                }
             }
-            else {
+            else if (floorListStr[i].split('')[0] == 'e') {
                 var waterPool = ObjPool.getItemForPool("pond", Pond);
-                waterPool.createAni();
-                waterPool.x = GameConfig.instance.floorWidth * i;
+                waterPool.setDiff(floorListStr[i].split('')[1]);
+                waterPool.x = this._floorList[this._floorList.length - 1].x + this._floorList[this._floorList.length - 1].width;
                 waterPool.y = GameConfig.instance.stageHeight - waterPool.height;
                 this._waterPoolList.push(waterPool);
+                this._lastObj = null;
+                this._lastObj = waterPool;
                 UIManager.instance.addBg(waterPool);
             }
             //添加怪物
             for (var m = 0; m < gameConfig.monster.length; m++) {
                 if (gameConfig.monster[m].mapKey == this._floorList.length) {
                     var monster = new Monster(gameConfig.monster[m].mt);
-                    monster.x = this._floorList[gameConfig.monster[m].mapKey - 1].x;
+                    monster.x = this._floorList[gameConfig.monster[m].mapKey - 1].x + 50;
                     monster.y = this._floorList[gameConfig.monster[m].mapKey - 1].y - monster.height / 4;
                     this._monsterList.push(monster);
                     UIManager.instance.addSprite(monster);
@@ -69,6 +87,7 @@ var GameController = (function (_super) {
     };
     /**帧监听 */
     GameController.prototype.onLoop = function () {
+        this.gameScene.onLoop();
         this._player.onLoop();
         this.collideCheck();
         this.clearFloor();
@@ -89,8 +108,13 @@ var GameController = (function (_super) {
         // return effFloors;
     };
     /**返回Monster信息 */
-    GameController.prototype.getMonsterList = function () {
-        return '';
+    GameController.prototype.getMonsterInfo = function () {
+        for (var i = 0; i < this._monsterList.length; ++i) {
+            if (this._player.x >= this._monsterList[i].x && this._player.x < (this._monsterList[i].x + this._monsterList[i].width)) {
+                return this._monsterList[i];
+            }
+        }
+        return null;
     };
     /**碰撞检测 */
     GameController.prototype.collideCheck = function () {
@@ -115,6 +139,13 @@ var GameController = (function (_super) {
         }
         else {
             GameConfig.instance.speedX = 0;
+        }
+        /**怪物碰撞检测 */
+        var vaildMonster = this.getMonsterInfo();
+        if (vaildMonster && vaildMonster.collide(this._player)) {
+            //掉血 并且将怪物从数组中移除，以为值掉一次血
+            this._monsterList.shift();
+            this.gameScene.dropOfBlood();
         }
     };
     /**清除地图块 */

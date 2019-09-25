@@ -12,10 +12,16 @@ var GameScene = (function (_super) {
     __extends(GameScene, _super);
     function GameScene() {
         var _this = _super.call(this) || this;
+        _this.hpNum = 3; //血量
         _this.skinName = "resource/game_skins/mainScene.exml";
         return _this;
     }
     GameScene.prototype.onLoop = function () {
+        if (GameConfig.instance.gameEnd) {
+            this.ggText.visible = true;
+            this.ggbg.visible = true;
+            return;
+        }
         this.bgGroup.x -= GameConfig.instance.speed / 5;
         this.moveX = Math.abs(this.bgGroup.x);
         if (this.moveX - this.bg1.x >= this.bg1.width) {
@@ -27,10 +33,19 @@ var GameScene = (function (_super) {
         if (this.moveX - this.bg3.x >= this.bg3.width) {
             this.bg3.x += this.bg3.width * 3;
         }
-        if (GameConfig.instance.gameEnd) {
-            this.ggText.visible = true;
-            this.ggbg.visible = true;
+        this.cloudGroup.x -= GameConfig.instance.cloudSpeed;
+        if ((this.cloudGroup.x + this.cloudGroup.width) < 0) {
+            this.cloudGroup.x = GameConfig.instance.stageWidht + this.cloudGroup.width;
         }
+    };
+    /**掉血 */
+    GameScene.prototype.dropOfBlood = function () {
+        if (this.hpNum <= 0) {
+            GameConfig.instance.gameEnd = true;
+            return;
+        }
+        this.removeChild(this["hp" + this.hpNum]);
+        --this.hpNum;
     };
     return GameScene;
 }(eui.Component));
